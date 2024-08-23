@@ -2,6 +2,7 @@
 using Axidel.Domain.Entities.Collections;
 using Axidel.Domain.Entities.Tags;
 using Axidel.Domain.Entities.Users;
+using System.Text.Json.Serialization;
 
 
 namespace Axidel.Domain.Entities.Items;

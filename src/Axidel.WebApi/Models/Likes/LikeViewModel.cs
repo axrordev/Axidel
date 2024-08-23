@@ -7,5 +7,4 @@ public class LikeViewModel
 {
     public long Id { get; set; }
     public UserViewModel User { get; set; }
-    public ItemViewModel Item { get; set; }
 }

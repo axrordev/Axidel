@@ -12,7 +12,6 @@ public class ItemViewModel
 {
     public long Id { get; set; }
     public string Name { get; set; }
-    public CollectionViewModel Collection { get; set; }
     public UserViewModel User { get; set; }
     public ICollection<CommentViewModel> Comments { get; set; }
     public ICollection<LikeViewModel> Likes { get; set; }
