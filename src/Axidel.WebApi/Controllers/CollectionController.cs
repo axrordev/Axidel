@@ -1,12 +1,15 @@
 ﻿using Axidel.Service.Configurations;
+using Axidel.Service.Services.Assets;
+using Axidel.WebApi.ApiServices.Assets;
 using Axidel.WebApi.ApiServices.Collections;
 using Axidel.WebApi.Models.Collections;
 using Axidel.WebApi.Models.Commons;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualBasic.FileIO;
 
 namespace Axidel.WebApi.Controllers
 {
-    public class CollectionController(ICollectionApiService collectionApiService) : BaseController
+    public class CollectionController(ICollectionApiService collectionApiService, IAssetApiService assetApiService) : BaseController
     {
 
         [HttpPost]
@@ -37,14 +40,16 @@ namespace Axidel.WebApi.Controllers
             });
         }
 
-        [HttpDelete("{id:long}")]
-        public async Task<IActionResult> DeleteAsync(long id)
+        [HttpDelete("delete-collection/{id:long}")]
+        public async Task<IActionResult> DeleteCollectionAsync(long id)
         {
+            await collectionApiService.DeleteAsync(id);
+
             return Ok(new Response
             {
                 StatusCode = 200,
                 Message = "Collection deleted successfully.",
-                Data = await collectionApiService.DeleteAsync(id)
+                Data = null
             });
         }
 
@@ -70,6 +75,36 @@ namespace Axidel.WebApi.Controllers
                 Message = "Collection retrieved successfully.",
                 Data = await collectionApiService.GetAllAsync(@params, filter)
             });
-        }      
+        }
+
+        [HttpPost("upload-image")]
+        public async Task<IActionResult> UploadImageAsync(IFormFile file, string fileType = "Images")
+        {
+            if (file == null)
+                return BadRequest("No file uploaded.");
+
+            var uploadedAsset = await assetApiService.UploadAsync(file, fileType.ToString());
+
+            return Ok(new Response
+            {
+                StatusCode = 200,
+                Message = "Image uploaded successfully.",
+                Data = uploadedAsset
+            });
+        }
+
+        [HttpGet("get-image/{id:long}")]
+        public async Task<IActionResult> GetImageAsync(long id)
+        {
+            var image = await assetApiService.GetByIdAsync(id);
+
+            return Ok(new Response
+            {
+                StatusCode = 200,
+                Message = "Image retrieved successfully.",
+                Data = image
+            });
+        }
+
     }
 }

@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Axidel.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class first : Migration
+    public partial class initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -168,8 +168,8 @@ namespace Axidel.Data.Migrations
                     Name = table.Column<string>(type: "text", nullable: true),
                     Description = table.Column<string>(type: "text", nullable: true),
                     Category = table.Column<string>(type: "text", nullable: true),
-                    ImageId = table.Column<long>(type: "bigint", nullable: true),
                     UserId = table.Column<long>(type: "bigint", nullable: false),
+                    ImageId = table.Column<long>(type: "bigint", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
@@ -190,39 +190,6 @@ namespace Axidel.Data.Migrations
                         name: "FK_Collections_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CollectionImages",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    CollectionId = table.Column<long>(type: "bigint", nullable: false),
-                    ImageId = table.Column<long>(type: "bigint", nullable: false),
-                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false),
-                    DeletedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    CreatedById = table.Column<long>(type: "bigint", nullable: false),
-                    UpdatedById = table.Column<long>(type: "bigint", nullable: true),
-                    DeletedById = table.Column<long>(type: "bigint", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CollectionImages", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_CollectionImages_Assets_ImageId",
-                        column: x => x.ImageId,
-                        principalTable: "Assets",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CollectionImages_Collections_CollectionId",
-                        column: x => x.CollectionId,
-                        principalTable: "Collections",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -433,16 +400,6 @@ namespace Axidel.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_CollectionImages_CollectionId",
-                table: "CollectionImages",
-                column: "CollectionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_CollectionImages_ImageId",
-                table: "CollectionImages",
-                column: "ImageId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Collections_Id_Name_Description_Category",
                 table: "Collections",
                 columns: new[] { "Id", "Name", "Description", "Category" });
@@ -551,9 +508,6 @@ namespace Axidel.Data.Migrations
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "CollectionImages");
-
             migrationBuilder.DropTable(
                 name: "Comments");
 

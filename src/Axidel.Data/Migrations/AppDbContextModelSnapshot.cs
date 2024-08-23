@@ -77,50 +77,6 @@ namespace Axidel.Data.Migrations
                     b.ToTable("Collections");
                 });
 
-            modelBuilder.Entity("Axidel.Domain.Entities.Collections.CollectionImage", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
-
-                    b.Property<long>("CollectionId")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long>("CreatedById")
-                        .HasColumnType("bigint");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long?>("DeletedById")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("ImageId")
-                        .HasColumnType("bigint");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<long?>("UpdatedById")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CollectionId");
-
-                    b.HasIndex("ImageId");
-
-                    b.ToTable("CollectionImages");
-                });
-
             modelBuilder.Entity("Axidel.Domain.Entities.Collections.CustomField", b =>
                 {
                     b.Property<long>("Id")
@@ -679,25 +635,6 @@ namespace Axidel.Data.Migrations
                     b.Navigation("Image");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Axidel.Domain.Entities.Collections.CollectionImage", b =>
-                {
-                    b.HasOne("Axidel.Domain.Entities.Collections.Collection", "Collection")
-                        .WithMany()
-                        .HasForeignKey("CollectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Axidel.Domain.Entities.Commons.Asset", "Image")
-                        .WithMany()
-                        .HasForeignKey("ImageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Collection");
-
-                    b.Navigation("Image");
                 });
 
             modelBuilder.Entity("Axidel.Domain.Entities.Collections.CustomField", b =>

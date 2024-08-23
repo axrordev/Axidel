@@ -1,55 +1,126 @@
-﻿using Axidel.Data.UnitOfWorks;
+﻿//using Axidel.Data.UnitOfWorks;
+//using Axidel.Domain.Entities.Commons;
+//using Axidel.Service.Exceptions;
+//using Axidel.Service.Helpers;
+//using Microsoft.AspNetCore.Http;
+
+//namespace Axidel.Service.Services.Assets;
+
+//public class AssetService(IUnitOfWork unitOfWork) : IAssetService
+//{
+//    public async ValueTask<Asset> UploadAsync(IFormFile file, string fileType)
+//    {
+//        var path = Path.Combine(FilePathHelper.WwwrootPath, fileType.ToString());
+//        var fileName = file.FileName;
+
+//        if (!Directory.Exists(path))
+//            Directory.CreateDirectory(path);
+
+//        var fullPath = Path.Combine(path, fileName);
+
+//        var stream = File.Create(fullPath);
+//        await file.CopyToAsync(stream);
+//        stream.Close();
+
+//        var asset = new Asset
+//        {
+//            FileName = fileName,
+//            FilePath = fullPath,
+//        };
+
+//        await unitOfWork.AssetRepository.InsertAsync(asset);
+//        await unitOfWork.SaveAsync();
+
+//        return asset;
+//    }
+
+//    public async ValueTask<bool> DeleteAsync(long id)
+//    {
+//        var existAsset = await unitOfWork.AssetRepository.SelectAsync(file => file.Id == id)
+//           ?? throw new NotFoundException("Asset is not found");
+
+//        File.Delete(existAsset.FilePath);
+
+//        existAsset.DeletedAt = DateTime.UtcNow;
+//        await unitOfWork.AssetRepository.DeleteAsync(existAsset);
+//        await unitOfWork.SaveAsync();
+
+//        return true;
+//    }
+
+//    public async ValueTask<Asset> GetByIdAsync(long id)
+//    {
+//        var existFile = await unitOfWork.AssetRepository.SelectAsync(file => file.Id == id)
+//            ?? throw new NotFoundException($"File is not found with this ID={id}");
+
+//        return existFile;
+//    }
+//}
+using Axidel.Data.UnitOfWorks;
 using Axidel.Domain.Entities.Commons;
 using Axidel.Service.Exceptions;
 using Axidel.Service.Helpers;
 using Microsoft.AspNetCore.Http;
+using System.IO;
+using System.Threading.Tasks;
 
-namespace Axidel.Service.Services.Assets;
-
-public class AssetService(IUnitOfWork unitOfWork) : IAssetService
+namespace Axidel.Service.Services.Assets
 {
-    public async ValueTask<Asset> UploadAsync(IFormFile file, string fileType)
+    public class AssetService(IUnitOfWork unitOfWork) : IAssetService
     {
-        var directoryPath = Path.Combine(EnvironmentHelper.WebRootPath, fileType);
-        if (!Directory.Exists(directoryPath))
-            Directory.CreateDirectory(directoryPath);
 
-        var fullPath = Path.Combine(directoryPath, file.FileName);
-
-        var fileStream = new FileStream(fullPath, FileMode.OpenOrCreate);
-        var memoryStream = new MemoryStream();
-        file.CopyTo(memoryStream);
-        var bytes = memoryStream.ToArray();
-        await fileStream.WriteAsync(bytes);
-
-        var asset = new Asset
+        public async ValueTask<Asset> UploadAsync(IFormFile file, string fileType)
         {
-            FilePath = fullPath,
-            FileName = file.FileName,
-            CreatedById = HttpContextHelper.GetUserId
-        };
+            var path = Path.Combine(FilePathHelper.WwwrootPath, fileType);
+            var fileName = file.FileName;
 
-        var createdAsset = await unitOfWork.AssetRepository.InsertAsync(asset);
-        await unitOfWork.SaveAsync();
+            if (!Directory.Exists(path))
+                Directory.CreateDirectory(path);
 
-        return createdAsset;
-    }
+            var fullPath = Path.Combine(path, fileName);
 
-    public async ValueTask<bool> DeleteAsync(long id)
-    {
-        var existFile = await unitOfWork.AssetRepository.SelectAsync(file => file.Id == id)
-            ?? throw new NotFoundException($"File is not found with this ID={id}");
+            using (var stream = new FileStream(fullPath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
 
-        await unitOfWork.AssetRepository.DeleteAsync(existFile);
-        await unitOfWork.SaveAsync();
-        return true;
-    }
+            var asset = new Asset
+            {
+                FileName = fileName,
+                FilePath = fullPath,
+                CreatedAt = DateTime.UtcNow,
+                UpdatedAt = DateTime.UtcNow
+            };
 
-    public async ValueTask<Asset> GetByIdAsync(long id)
-    {
-        var existFile = await unitOfWork.AssetRepository.SelectAsync(file => file.Id == id)
-            ?? throw new NotFoundException($"File is not found with this ID={id}");
+            await unitOfWork.AssetRepository.InsertAsync(asset);
+            await unitOfWork.SaveAsync();
 
-        return existFile;
+            return asset;
+        }
+
+        public async ValueTask<bool> DeleteAsync(long id)
+        {
+            var existAsset = await unitOfWork.AssetRepository.SelectAsync(file => file.Id == id)
+               ?? throw new NotFoundException("Asset is not found");
+
+            if (File.Exists(existAsset.FilePath))
+            {
+                File.Delete(existAsset.FilePath);
+            }
+
+            existAsset.DeletedAt = DateTime.UtcNow;
+            await unitOfWork.AssetRepository.DeleteAsync(existAsset);
+            await unitOfWork.SaveAsync();
+
+            return true;
+        }
+
+        public async ValueTask<Asset> GetByIdAsync(long id)
+        {
+            var existFile = await unitOfWork.AssetRepository.SelectAsync(file => file.Id == id)
+                ?? throw new NotFoundException($"File is not found with this ID={id}");
+
+            return existFile;
+        }
     }
 }

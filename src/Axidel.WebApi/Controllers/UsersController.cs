@@ -22,24 +22,24 @@ public class UsersController(IUserApiService userApiService) : BaseController
     }
 
     [HttpDelete("{id:long}")]
-    public async ValueTask<IActionResult> DeleteAsync()
+    public async ValueTask<IActionResult> DeleteAsync(long id)
     {
         return Ok(new Response
         {
             StatusCode = 200,
             Message = "Success",
-            Data = await userApiService.DeleteAsync(GetUserId)
+            Data = await userApiService.DeleteAsync(id)
         });
     }
 
     [HttpGet("{id:long}")]
-    public async ValueTask<IActionResult> GetAsync()
+    public async ValueTask<IActionResult> GetAsync(long id)
     {
         return Ok(new Response
         {
             StatusCode = 200,
             Message = "Success",
-            Data = await userApiService.GetAsync(GetUserId)
+            Data = await userApiService.GetAsync(id)
         });
     }
 

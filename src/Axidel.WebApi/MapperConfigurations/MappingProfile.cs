@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Axidel.Domain.Entities.Collections;
+using Axidel.Domain.Entities.Commons;
 using Axidel.Domain.Entities.Items;
 using Axidel.Domain.Entities.Tags;
 using Axidel.Domain.Entities.Users;
+using Axidel.WebApi.Models.Assets;
 using Axidel.WebApi.Models.CollectionImages;
 using Axidel.WebApi.Models.Collections;
 using Axidel.WebApi.Models.Comments;
@@ -48,7 +50,6 @@ public class MappingProfile : Profile
 
         // CollectionImage and related entities
         CreateMap<CollectionImageCreateModel, Collection>();
-        CreateMap<CollectionImage, CollectionImageViewModel>();
 
         // Comment and related entities
         CreateMap<CommentCreateModel, Comment>();
@@ -81,5 +82,7 @@ public class MappingProfile : Profile
         CreateMap<TagCreateModel, Tag>();
         CreateMap<TagUpdateModel, Tag>();
         CreateMap<Tag, TagViewModel>();
+
+        CreateMap<Asset, AssetViewModel>().ReverseMap();
     }
 }

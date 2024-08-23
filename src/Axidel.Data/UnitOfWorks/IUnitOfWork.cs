@@ -12,7 +12,6 @@ namespace Axidel.Data.UnitOfWorks;
 public interface IUnitOfWork : IDisposable
 {
     IRepository<Collection> CollectionRepository { get; }
-    IRepository<CollectionImage> CollectionImageRepository { get; }
     IRepository<CustomField> CustomFieldRepository { get; }
     IRepository<Asset> AssetRepository { get; }
     IRepository<Comment> CommentRepository { get; }

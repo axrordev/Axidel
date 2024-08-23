@@ -11,9 +11,7 @@ namespace Axidel.Data.DbContexts;
 public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
-
     public DbSet<Collection> Collections { get; set; }
-    public DbSet<CollectionImage> CollectionImages { get; set; }
     public DbSet<CustomField> CustomFields { get; set; }
     public DbSet<CustomFieldValue> CustomFieldValues { get; set; }
     public DbSet<Asset> Assets { get; set; }
@@ -30,27 +28,18 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Collection>()
-           .HasOne(collection => collection.Image)
-           .WithMany()
-           .HasForeignKey(collection => collection.ImageId);
-
-        modelBuilder.Entity<Collection>()
             .HasOne(collection => collection.User)
             .WithMany(user => user.Collections)
             .HasForeignKey(collection => collection.UserId);
 
         modelBuilder.Entity<Collection>()
+           .HasOne(collection => collection.Image)
+           .WithMany()
+           .HasForeignKey(collection => collection.ImageId);
+
+        modelBuilder.Entity<Collection>()
             .HasIndex(c => new { c.Id, c.Name, c.Description, c.Category });
 
-        modelBuilder.Entity<CollectionImage>()
-            .HasOne(ci => ci.Image)
-            .WithMany()
-            .HasForeignKey(ci => ci.ImageId);
-
-        modelBuilder.Entity<CollectionImage>()
-            .HasOne(ci => ci.Collection)
-            .WithMany()
-            .HasForeignKey(ci => ci.CollectionId);
 
         modelBuilder.Entity<CustomField>()
             .HasOne(customField => customField.Collection)
@@ -135,7 +124,6 @@ public class AppDbContext : DbContext
            .HasForeignKey(permission => permission.UserRoleId);
 
         modelBuilder.Entity<Collection>().HasQueryFilter(entity => !entity.IsDeleted);
-        modelBuilder.Entity<CollectionImage>().HasQueryFilter(entity => !entity.IsDeleted);
         modelBuilder.Entity<CustomField>().HasQueryFilter(entity => !entity.IsDeleted);
         modelBuilder.Entity<CustomFieldValue>().HasQueryFilter(entity => !entity.IsDeleted);
         modelBuilder.Entity<Asset>().HasQueryFilter(entity => !entity.IsDeleted);

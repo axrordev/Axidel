@@ -2,7 +2,6 @@
 using Axidel.Service.Helpers;
 using Axidel.Service.Services.Accounts;
 using Axidel.Service.Services.Assets;
-using Axidel.Service.Services.CollectionImages;
 using Axidel.Service.Services.Collections;
 using Axidel.Service.Services.Comments;
 using Axidel.Service.Services.CustomFields;
@@ -16,7 +15,7 @@ using Axidel.Service.Services.UserRolePermissions;
 using Axidel.Service.Services.UserRoles;
 using Axidel.Service.Services.Users;
 using Axidel.WebApi.ApiServices.Accounts;
-using Axidel.WebApi.ApiServices.CollectionImages;
+using Axidel.WebApi.ApiServices.Assets;
 using Axidel.WebApi.ApiServices.Collections;
 using Axidel.WebApi.ApiServices.Comments;
 using Axidel.WebApi.ApiServices.CustomFields;
@@ -45,7 +44,6 @@ public static class ServicesCollectionExtension
     {
         services.AddScoped<IAccountService, AccountService>();
         services.AddScoped<IAssetService, AssetService>();
-        services.AddScoped<ICollectionImageService, CollectionImageService>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<ICollectionService, CollectionService>();
@@ -63,8 +61,8 @@ public static class ServicesCollectionExtension
 
     public static void AddApiServices(this IServiceCollection services)
     {
+        services.AddScoped<IAssetApiService, AssetApiService>();
         services.AddScoped<IAccountApiService, AccountApiService>();
-        services.AddScoped<ICollectionImageApiService, CollectionImageApiService>();
         services.AddScoped<IUserApiService, UserApiService>();
         services.AddScoped<ICollectionApiService, CollectionApiService>();
         services.AddScoped<ICommentApiService, CommentApiService>();
@@ -81,6 +79,8 @@ public static class ServicesCollectionExtension
 
     public static void AddExceptions(this IServiceCollection services)
     {
+        FilePathHelper.WwwrootPath = Path.GetFullPath("wwwroot");
+
         services.AddExceptionHandler<NotFoundExceptionMiddleware>();
         services.AddExceptionHandler<ForbiddenExceptionMiddleware>();
         services.AddExceptionHandler<AlreadyExistExceptionMiddleware>();
