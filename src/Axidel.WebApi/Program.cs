@@ -32,7 +32,19 @@ builder.Services.AddProblemDetails();
 
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin",
+        builder => builder
+            .WithOrigins("https://axidel.netlify.app") // Add your frontend URL here
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
+
+
 var app = builder.Build();
+
+app.UseCors("AllowSpecificOrigin");
 
 app.AddInjectHelper();
 
