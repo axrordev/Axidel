@@ -10,6 +10,7 @@ using Axidel.Service.Services.Items;
 using Axidel.Service.Services.ItemTags;
 using Axidel.Service.Services.Likes;
 using Axidel.Service.Services.Permissions;
+using Axidel.Service.Services.SearchServices;
 using Axidel.Service.Services.Tags;
 using Axidel.Service.Services.UserRolePermissions;
 using Axidel.Service.Services.UserRoles;
@@ -57,6 +58,8 @@ public static class ServicesCollectionExtension
         services.AddScoped<IPermissionService, PermissionService>();
         services.AddScoped<IUserRoleService, UserRoleService>();
         services.AddScoped<IUserRolePermissionService, UserRolePermissionService>();
+        services.AddScoped<ISearchService, SearchService>();
+
     }
 
     public static void AddApiServices(this IServiceCollection services)
