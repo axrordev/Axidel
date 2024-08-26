@@ -39,11 +39,12 @@ public static class EmailHelper
         await SendMessageAsync(email, "", code.ToString());
 
         var cacheOptions = new MemoryCacheEntryOptions()
-            .SetSlidingExpiration(TimeSpan.FromSeconds(60))
-            .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
+            .SetSlidingExpiration(TimeSpan.FromMinutes(5))  
+            .SetAbsoluteExpiration(TimeSpan.FromMinutes(5)) 
             .SetPriority(CacheItemPriority.Normal)
             .SetSize(1024);
 
         memoryCache.Set(key, code, cacheOptions);
     }
+
 }

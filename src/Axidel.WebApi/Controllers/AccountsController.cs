@@ -19,24 +19,14 @@ public class AccountsController(IAccountApiService accountApiService) : BaseCont
     }
 
     [HttpGet("register-verify")]
-    public async ValueTask<IActionResult> RegisterVerifyAsync(string email, string code)
+    public async ValueTask<IActionResult> RegisterVerifyAsync(string email, string code, string password)
     {
-        await accountApiService.RegisterVerifyAsync(email, code);
+        await accountApiService.RegisterVerifyAsync(email, code, password);
         return Ok(new Response
         {
             StatusCode = 200,
             Message = "Success",
-        });
-    }
-
-    [HttpPost("create")]
-    public async ValueTask<IActionResult> CreateAsync(string email)
-    {
-        return Ok(new Response
-        {
-            StatusCode = 200,
-            Message = "Success",
-            Data = await accountApiService.CreateAsync(email)
+            Data = await accountApiService.LoginAsync(email, password)
         });
     }
 
