@@ -26,17 +26,13 @@ public class AccountApiService(
         await accountService.RegisterAsync(mapper.Map<User>(registerModel));
     }
 
-    public async ValueTask<LoginViewModel> RegisterVerifyAsync(string email, string code, string password)
+    public async ValueTask RegisterVerifyAsync(string email, string code)
     {
         await verifyValidator.EnsureValidatedAsync(email, code);
         await accountService.RegisterVerifyAsync(email, code);
 
         await createValidator.EnsureValidatedAsync(email);
         await accountService.CreateAsync(email);
-
-        var loginViewModel = await LoginAsync(email, password); 
-
-        return loginViewModel;
     }
 
     public async ValueTask<LoginViewModel> LoginAsync(string email, string password)
