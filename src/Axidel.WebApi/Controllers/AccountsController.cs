@@ -18,7 +18,7 @@ public class AccountsController(IAccountApiService accountApiService) : BaseCont
         });
     }
 
-    [HttpGet("register-verify")]
+    [HttpPost("register-verify")]
     public async ValueTask<IActionResult> RegisterVerifyAsync(string email, string code, string password)
     {
         await accountApiService.RegisterVerifyAsync(email, code, password);
