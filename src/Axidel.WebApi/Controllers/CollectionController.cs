@@ -13,16 +13,33 @@ namespace Axidel.WebApi.Controllers
     {
 
         [HttpPost]
-        public async Task<IActionResult> PostAsync([FromBody] CollectionCreateModel createModel)
+        public async Task<IActionResult> PostAsync([FromForm] CollectionCreateModel createModel, [FromForm] IFormFile file, string fileType = "Images")
         {
-            if (createModel == null)
-                return BadRequest("Invalid collection data.");
+            if (createModel == null || file == null)
+                return BadRequest("Invalid collection or file data.");
 
+            // Faylni yuklash
+            var uploadedAsset = await assetApiService.UploadAsync(file, fileType);
+
+            // Rasm URL'ni yaratish
+            var imageUrl = Url.Content($"~/Images/{uploadedAsset.FileName}");
+
+            // ImageId ni CollectionCreateModel ichiga qo'shamiz
+            createModel.ImageId = uploadedAsset.Id;
+
+            // Collection yaratamiz
+            var collection = await collectionApiService.CreateAsync(createModel);
+
+            // Frontendga rasm URL'ni va Collection ma'lumotini jo'natamiz
             return Ok(new Response
             {
                 StatusCode = 200,
                 Message = "Collection created successfully.",
-                Data = await collectionApiService.CreateAsync(createModel)
+                Data = new
+                {
+                    Collection = collection,
+                    ImageUrl = imageUrl // Bu URL frontendda rasmni ko'rsatish uchun ishlatiladi
+                }
             });
         }
 
@@ -77,21 +94,6 @@ namespace Axidel.WebApi.Controllers
             });
         }
 
-        [HttpPost("upload-image")]
-        public async Task<IActionResult> UploadImageAsync(IFormFile file, string fileType = "Images")
-        {
-            if (file == null)
-                return BadRequest("No file uploaded.");
-
-            var uploadedAsset = await assetApiService.UploadAsync(file, fileType.ToString());
-
-            return Ok(new Response
-            {
-                StatusCode = 200,
-                Message = "Image uploaded successfully.",
-                Data = uploadedAsset
-            });
-        }
 
         [HttpGet("get-image/{id:long}")]
         public async Task<IActionResult> GetImageAsync(long id)
