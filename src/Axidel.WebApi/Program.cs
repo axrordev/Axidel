@@ -5,61 +5,79 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Xizmatlarni ro'yxatdan o'tkazish
 builder.Services.AddControllers();
 
-builder.Services.AddDbContext<AppDbContext>(options
-    => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+// PostgreSQL bilan bog'lanish
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+// AutoMapper konfiguratsiyasi
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
+// Xotira keshini qo'shish
 builder.Services.AddMemoryCache();
 
+// API xizmatlari va biznes xizmatlarini ro'yxatdan o'tkazish
 builder.Services.AddApiServices();
-
 builder.Services.AddServices();
 
+// Validatorlarni qo'shish
 builder.Services.AddValidators();
 
+// Swagger konfiguratsiyasi va xizmatlari
 builder.Services.AddEndpointsApiExplorer();
-
 builder.Services.ConfigureSwagger();
 
+// Xatolikni boshqarish (Exception middleware'lari)
 builder.Services.AddExceptions();
 
+// JWT autentifikatsiyasini qo'shish
 builder.Services.AddJwt(builder.Configuration);
 
-builder.Services.AddProblemDetails();
-
+// HTTP kontekst uchun qo'llanma
 builder.Services.AddHttpContextAccessor();
 
+// CORS siyosatini qo'shish (frontend URL'ini qo'shing)
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
         builder => builder
-            .WithOrigins("https://axidel.netlify.app") // Add your frontend URL here
+            .WithOrigins("https://axidel.netlify.app") // Frontend URL'ini qo'shing
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
 
-
+// Ilovani yaratish
 var app = builder.Build();
 
+// CORS siyosatini ishlatish
 app.UseCors("AllowSpecificOrigin");
 
+// Qo'shimcha yordamchi funksiyalarni sozlash
 app.AddInjectHelper();
-
 app.AddPathInitializer();
 
-app.UseSwagger();
+// Swagger uchun yo'l konfiguratsiyasi
+app.UseSwagger(c => c.RouteTemplate = "swagger/{documentName}/swagger.json");
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Axidel API V1");
+    c.RoutePrefix = "swagger"; // Swagger UI shu yo'lda ochiladi
+});
 
-app.UseSwaggerUI();
+// Xatoliklarni boshqarish uchun maxsus yo'l
+app.UseExceptionHandler("/error");
 
-app.UseExceptionHandler();
-
+// HTTPS orqali ulanishni majburiy qilish
 app.UseHttpsRedirection();
+
+// Autentifikatsiya va avtorizatsiya middleware'larini qo'shish
 app.UseAuthentication();
 app.UseAuthorization();
 
+// Controller'larni xaritalash
 app.MapControllers();
 
+// Ilovani ishga tushirish
 app.Run();

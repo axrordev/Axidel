@@ -148,6 +148,7 @@ public static class ServicesCollectionExtension
     {
         services.AddSwaggerGen(setup =>
         {
+            // JWT autentifikatsiyasi uchun Swagger konfiguratsiyasi
             var jwtSecurityScheme = new OpenApiSecurityScheme
             {
                 BearerFormat = "JWT",
@@ -170,6 +171,23 @@ public static class ServicesCollectionExtension
                 {
                     { jwtSecurityScheme, Array.Empty<string>() }
                 });
+
+            // Swagger dokumentatsiyasi
+            setup.SwaggerDoc("v1", new OpenApiInfo { Title = "Axidel API", Version = "v1" });
         });
     }
+
+    public static void UseSwaggerUIWithDefaultPath(this IApplicationBuilder app)
+    {
+        // Swagger JSON faylining yo'lini aniqlash
+        app.UseSwagger(c => c.RouteTemplate = "swagger/{documentName}/swagger.json");
+
+        // Swagger UI sozlamalari
+        app.UseSwaggerUI(c =>
+        {
+            c.SwaggerEndpoint("/swagger/v1/swagger.json", "Axidel API V1");
+            c.RoutePrefix = "swagger"; // Swagger UI shu yo'lda ochiladi
+        });
+    }
+
 }
