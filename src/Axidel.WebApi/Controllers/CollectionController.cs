@@ -13,7 +13,7 @@ namespace Axidel.WebApi.Controllers
     {
 
         [HttpPost]
-        public async Task<IActionResult> PostAsync([FromForm] CollectionCreateModel createModel, [FromForm] IFormFile file, string fileType = "Images")
+        public async Task<IActionResult> PostAsync([FromForm] CollectionCreateModel createModel, IFormFile file, string fileType = "Images")
         {
             if (createModel == null || file == null)
                 return BadRequest("Invalid collection or file data.");

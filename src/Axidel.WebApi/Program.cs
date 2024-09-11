@@ -43,7 +43,7 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowSpecificOrigin",
         builder => builder
-            .WithOrigins("https://axidel.netlify.app") // Frontend URL'ini qo'shing
+            .WithOrigins("https://axidel.netlify.app")
             .AllowAnyHeader()
             .AllowAnyMethod());
 });
@@ -63,7 +63,7 @@ app.UseSwagger(c => c.RouteTemplate = "swagger/{documentName}/swagger.json");
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Axidel API V1");
-    c.RoutePrefix = "swagger"; // Swagger UI shu yo'lda ochiladi
+    c.RoutePrefix = "swagger";
 });
 
 // Xatoliklarni boshqarish uchun maxsus yo'l
