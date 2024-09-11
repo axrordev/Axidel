@@ -8,8 +8,8 @@ namespace Axidel.Service.Services.Assets
 {
 	public class AssetService(IUnitOfWork unitOfWork) : IAssetService
 	{
-		public async ValueTask<Asset> UploadAsync(IFormFile file, string fileType)
-		{
+        public async ValueTask<Asset> UploadAsync(IFormFile file, string fileType)
+        {
             // Faylni saqlash papkasini belgilash
             var path = Path.Combine(FilePathHelper.WwwrootPath, fileType);
             if (!Directory.Exists(path))
@@ -20,16 +20,18 @@ namespace Axidel.Service.Services.Assets
             var fullPath = Path.Combine(path, uniqueFileName);
 
             // Faylni yuklash jarayoni
-            using (var stream = new FileStream(fullPath, FileMode.Create))
-            {
-                await file.CopyToAsync(stream);
-            }
+            var stream = File.Create(fullPath);
+            await file.CopyToAsync(stream);
+            stream.Close();
+
+            // URL formatidagi yo'lni yaratish (frontend uchun)
+            var relativePath = $"/{fileType}/{uniqueFileName}";
 
             // Fayl ma'lumotlarini Asset obyektida saqlash
             var asset = new Asset
             {
                 FileName = file.FileName,
-                FilePath = $"/{fileType}/{uniqueFileName}", // Frontendda foydalanish uchun URL qaytariladi
+                FilePath = relativePath, // Frontend uchun URL ko'rinishida
                 CreatedAt = DateTime.UtcNow,
                 UpdatedAt = DateTime.UtcNow
             };
@@ -40,6 +42,7 @@ namespace Axidel.Service.Services.Assets
 
             return asset;
         }
+
 
         public async ValueTask<bool> DeleteAsync(long id)
 		{

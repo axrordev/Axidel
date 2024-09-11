@@ -21,9 +21,6 @@ namespace Axidel.WebApi.Controllers
             // Faylni yuklash
             var uploadedAsset = await assetApiService.UploadAsync(file, fileType);
 
-            // Rasm URL'ni yaratish
-            var imageUrl = Url.Content($"~/Images/{uploadedAsset.FileName}");
-
             // ImageId ni CollectionCreateModel ichiga qo'shamiz
             createModel.ImageId = uploadedAsset.Id;
 
@@ -38,7 +35,7 @@ namespace Axidel.WebApi.Controllers
                 Data = new
                 {
                     Collection = collection,
-                    ImageUrl = imageUrl // Bu URL frontendda rasmni ko'rsatish uchun ishlatiladi
+                    
                 }
             });
         }
