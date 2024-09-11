@@ -11,34 +11,29 @@ namespace Axidel.WebApi.Controllers
 {
     public class CollectionController(ICollectionApiService collectionApiService, IAssetApiService assetApiService) : BaseController
     {
-
         [HttpPost]
         public async Task<IActionResult> PostAsync([FromForm] CollectionCreateModel createModel, IFormFile file, string fileType = "Images")
         {
             if (createModel == null)
-                return BadRequest("Invalid collection or file data.");
+                return BadRequest("Invalid collection data.");
 
-            // Faylni yuklash
-            var uploadedAsset = await assetApiService.UploadAsync(file, fileType);
+            // Faylni yuklash faqat fayl mavjud bo'lganda amalga oshiriladi
+            if (file != null)
+            {
+                var uploadedAsset = await assetApiService.UploadAsync(file, fileType);
+                createModel.ImageId = uploadedAsset.Id;
+            }
 
-            // ImageId ni CollectionCreateModel ichiga qo'shamiz
-            createModel.ImageId = uploadedAsset.Id;
-
-            // Collection yaratamiz
             var collection = await collectionApiService.CreateAsync(createModel);
-
-            // Frontendga rasm URL'ni va Collection ma'lumotini jo'natamiz
+        
             return Ok(new Response
             {
                 StatusCode = 200,
                 Message = "Collection created successfully.",
-                Data = new
-                {
-                    Collection = collection,
-                    
-                }
+                Data = collection 
             });
         }
+
 
         [HttpPut("{id:long}")]
         public async Task<IActionResult> PutAsync(long id, [FromBody] CollectionUpdateModel updateModel)
