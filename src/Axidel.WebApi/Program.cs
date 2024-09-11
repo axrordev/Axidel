@@ -58,6 +58,9 @@ app.UseCors("AllowSpecificOrigin");
 app.AddInjectHelper();
 app.AddPathInitializer();
 
+// Statik fayllarni serve qilish
+app.UseStaticFiles(); // Bu qatorni qo'shing
+
 // Swagger uchun yo'l konfiguratsiyasi
 app.UseSwagger(c => c.RouteTemplate = "swagger/{documentName}/swagger.json");
 app.UseSwaggerUI(c =>
