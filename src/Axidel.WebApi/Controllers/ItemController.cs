@@ -10,20 +10,12 @@ namespace Axidel.WebApi.Controllers
         [HttpPost]
         public async Task<IActionResult> PostAsync([FromBody] ItemCreateModel createModel)
         {
-            var userId = HttpContext.User?.FindFirst("Id")?.Value;
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized();
-            }
-
             if (createModel == null)
                 return BadRequest(new Response
                 {
                     StatusCode = 400,
                     Message = "Invalid item data."
                 });
-
-            createModel.UserId = long.Parse(userId);
 
             var result = await itemApiService.CreateAsync(createModel);
 
